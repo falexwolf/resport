@@ -1,6 +1,6 @@
 """resport: Research portfolio site generator."""
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 import os
 import shutil
@@ -586,6 +586,9 @@ def main():
     args = p.parse_args()
     global doctype
     doctype = args.doctype
+
+    if not os.path.exists('_build'):
+        os.makedirs('_build')
 
     sources = []
     if args.source in {'.'}:
