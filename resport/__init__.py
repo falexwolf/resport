@@ -1,4 +1,4 @@
-"""resport: research portfolio site generator."""
+"""resport: Research portfolio site generator."""
 
 __version__ = "0.1.0"
 
@@ -20,7 +20,7 @@ start_card = '<div class="card" style="border: 1px solid rgba(0,0,0,.125); borde
 
 
 def markdown_no_p(text):
-    """Wrap around markdown.markdown function. """
+    """Wrap around markdown.markdown function."""
     html = markdown.markdown(text, extensions=['markdown.extensions.tables', 'toc'])
     # don't use the trailing paragraphs
     html = html[3:-4]
@@ -503,10 +503,8 @@ def process_source(single_source):
 
                 md = None
                 if '.md' in source_file:
-                    from fenced_code_marked import FencedCodeExtension
                     md = markdown.Markdown(extensions=[
-                        'mdx_math', 'markdown.extensions.tables', 'toc', 'meta',
-                        FencedCodeExtension()])
+                        'mdx_math', 'markdown.extensions.tables', 'toc', 'meta', 'fenced_code'])
                     md.convertFile(source_file, raw_html)
 
                 if '.rst' in source_file:
@@ -586,6 +584,7 @@ def main():
         type=str,
         help=('specify a .bib, .md or .ipynb source file'))
     args = p.parse_args()
+    global doctype
     doctype = args.doctype
 
     sources = []
