@@ -1,4 +1,0 @@
-dirsync
-markdown
-python-markdown-math
-

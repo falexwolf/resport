@@ -9,7 +9,11 @@ readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
-
+dependencies = [
+    "markdown",
+    "dirsync",
+    "python-markdown-math",
+]
 [project.urls]
 Home = "https://github.com/falexwolf/resport"
 
