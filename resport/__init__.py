@@ -416,7 +416,7 @@ def process_source(single_source):
 
     # this is for the experience section of the cv
     if single_source == '_cv/experience.bib':
-        f = open('/Users/falexwolf/Dropbox/pvt/falexwolf-site/_cv/source/generated_experience.tex', 'w')
+        f = open('_cv/source/generated_experience.tex', 'w')
         for entry in entries:
             f.write(format_latex_experience(entry))
         f.close()
@@ -426,7 +426,7 @@ def process_source(single_source):
             if doctype == 'html':
                 f = open('_build/' + source_out.replace('.bib', '.txt'), 'w')
             else:
-                f = open('/Users/falexwolf/Dropbox/pvt/falexwolf-site/_cv/source/generated_publications.tex', 'w')
+                f = open('_cv/source/generated_publications.tex', 'w')
             if 'publications' in single_source:
                 format_all_publications(f, entries=entries, doctype=doctype)
             elif 'talks' in single_source:  # these are only the talks, only html
@@ -458,10 +458,10 @@ def process_source(single_source):
             # now, deal with .md and .rst sources
             if source_out == 'about.md':
                 # generate the document root (index.html)
-                target_dir = '/Users/falexwolf/Dropbox/pvt/falexwolf-site/_site/'
+                target_dir = '_site/'
                 child = False
             else:
-                target_dir = ('/Users/falexwolf/Dropbox/pvt/falexwolf-site/_site/'
+                target_dir = ('_site/'
                     + source_out.split('.')[0])
                 child = True
             if not os.path.exists(target_dir): os.makedirs(target_dir)
@@ -537,7 +537,7 @@ def process_source(single_source):
                     elif 'INSERT_FOOTER' in line:
                         for l in open('_includes/footer.html'):
                             if l.startswith('#BLOG'):
-                                if not target.startswith('/Users/falexwolf/Dropbox/pvt/falexwolf-site/_site/blog/'):
+                                if not target.startswith('_site/blog/'):
                                     continue  # ignore these lines for non-blog
                                 else:
                                     l = l.replace('#BLOG', '')  # strip this start sequence
@@ -588,14 +588,12 @@ def main():
     doctype = args.doctype
 
     sources = []
-    sources_blog_external = []
     if args.source in {'.'}:
         for single_source in glob.glob('*'):
             if single_source.endswith(('.md', '.bib', '.rst')):
                 sources.append(single_source)
         for single_source in glob.glob('blog/*'):
-            if not single_source.endswith('_external_sources'):
-                sources.append(single_source)
+            sources.append(single_source)
     else:
         sources.append(args.source)
 
@@ -603,20 +601,6 @@ def main():
         print('processing source: {}'.format(single_source))
         process_source(single_source)
 
-    for single_source in sources_blog_external:
-        print('processing external source: {}'.format(single_source))
-        if single_source.endswith('/'): single_source = single_source[:-1]
-        target = './blog/' + single_source.split('/')[-1]
-        if os.path.isdir(single_source):
-            target_dir = target
-            for s in glob.glob(single_source + '/*'):
-                if s.endswith(('.rst', '.md', '.ipynb')):
-                    target = target_dir + '/index' + os.path.splitext(s)[1]
-                    if not os.path.exists(target_dir): os.makedirs(target_dir)
-                    shutil.copy(s, target)
-            process_source(target_dir)
-            shutil.rmtree(target_dir)
-        else:
-            shutil.copy(single_source, target)
-            process_source(target)
-            os.remove(target)
+    # update _site directory by copying over from _assets
+    from dirsync import sync
+    sync('_assets/', '_site', 'sync')
