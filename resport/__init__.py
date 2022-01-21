@@ -345,11 +345,7 @@ def format_talks(entry, doctype='html'):
     return s
 
 
-talks_header = '''\
-<h1>Talks</h1>
-<p> Slides available as <i>html</i> have been generated with
-    <a href="https://github.com/hakimel/reveal.js/">reveal.js</a>.
-</p>'''
+talks_header = "<h1>Talks</h1>"
 
 
 def format_all_publications(f, entries, doctype):
