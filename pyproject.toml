@@ -13,6 +13,7 @@ dependencies = [
     "markdown",
     "dirsync",
     "python-markdown-math",
+    "nbconvert",
 ]
 [project.urls]
 Home = "https://github.com/falexwolf/resport"
