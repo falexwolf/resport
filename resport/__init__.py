@@ -1,6 +1,6 @@
 """resport: Research portfolio site generator."""
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 import os
 import shutil
@@ -286,7 +286,7 @@ def format_pub(entry, doctype='html', ascard=False):
             #     code = entry['github']
             # user_repo = code.replace('https://github.com/', '')
             # s += f'<img src="https://img.shields.io/github/stars/{user_repo}.svg">'
-        # dimenions citations & altmetric
+        # dimensions citations & altmetric
         if 'doi' in entry:
             doi = entry['doi']
             s += f'<span class="__dimensions_badge_embed__" data-doi="{doi}" data-style="small_rectangle" style="display: inline-block; margin-left: 3px; vertical-align: baseline;"></span>'
@@ -345,11 +345,7 @@ def format_talks(entry, doctype='html'):
     return s
 
 
-talks_header = '''\
-<h1>Talks</h1>
-<p> Slides available as <i>html</i> have been generated with
-    <a href="https://github.com/hakimel/reveal.js/">reveal.js</a>.
-</p>'''
+talks_header = "<h1>Talks</h1>"
 
 
 def format_all_publications(f, entries, doctype):
@@ -408,8 +404,10 @@ def format_all_publications(f, entries, doctype):
 def process_source(single_source):
     """Process a source file.
     """
+    global posts  # add to global dict that tracks all posts
     source_out = single_source
-    source_out_stripped = source_out.split('.')[0]
+    source_out_stripped = source_out.split('.')[0]  # base filename without ending
+    is_post = source_out.startswith('_posts/')
 
     if '.bib' in single_source:
         entries = read_file(single_source)
@@ -456,20 +454,26 @@ def process_source(single_source):
                     single_source = new_source_dir
                     cleanup = True
             # now, deal with .md and .rst sources
-            if source_out == 'about.md':
-                # generate the document root (index.html)
-                target_dir = '_site/'
-                child = False
+            if source_out == 'about.md':  # generate the page root (index.html)
+                target_dir = '_site'
+            elif is_post:  # deal with posts
+                year = source_out.split('-')[0].lstrip('_posts/')  # get year
+                date = '-'.join(source_out.split('-')[:3]).lstrip('_posts/')  # extract ISO-format date
+                string = '-'.join(source_out.split('-')[3:])   # strip ISO-format date
+                target_link = year + '/' + string.split('.')[0]
+                target_dir = '_site/' + target_link
+                posts[source_out] = [target_link, date]
             else:
-                target_dir = ('_site/'
-                    + source_out.split('.')[0])
-                child = True
-            if not os.path.exists(target_dir): os.makedirs(target_dir)
+                target_dir = '_site/' + source_out.split('.')[0]
+            if not os.path.exists(target_dir):
+                os.makedirs(target_dir)
             if source_isdir:
-                if not single_source.endswith('/'): single_source += '/'
+                if not single_source.endswith('/'):
+                    single_source += '/'
                 build_dir = '_build/' + single_source
-                if not os.path.exists(build_dir): os.makedirs(build_dir)
-            # copy the content of a directory, mostly image files etc...
+                if not os.path.exists(build_dir):
+                    os.makedirs(build_dir)
+            # copy the content of a directory, mostly image files etc
             source_files = []
             if source_isdir:
                 for s in glob.glob(single_source + '*'):
@@ -487,8 +491,10 @@ def process_source(single_source):
 
             # generate and write all source files
             for source_file in source_files:
-                if source_isdir: target = target_dir + '/' + os.path.basename(source_file).split('.')[0] + '.html'
-                else: target = target_dir + '/index.html'
+                if source_isdir:
+                    target = target_dir + '/' + os.path.basename(source_file).split('.')[0] + '.html'
+                else:
+                    target = target_dir + '/index.html'
                 raw_html = ('_build/' + source_file).split('.')[0] + '.txt'
 
                 def remove_docutils_header_footer(textfile):
@@ -512,17 +518,6 @@ def process_source(single_source):
                               .format(source_file, raw_html))
                     remove_docutils_header_footer(raw_html)
 
-                def adjust_child_dir(line):
-                    if (line.startswith('    <link href="_vendor/')
-                        or line.startswith('    <link href="_css/')
-                        or line.startswith('    <link href="_js/')):
-                        return line.replace('href="', 'href="../../')
-                    elif (line.startswith('    <script src="_vendor/')
-                          or line.startswith('    <script src="_js/')):
-                        return line.replace('src="', 'src="../../')
-                    else:
-                        return line
-
                 out = open(target, 'w')
                 publications = read_file('publications.bib')
                 for line in open('_includes/blog.html'):
@@ -533,28 +528,29 @@ def process_source(single_source):
                             if '{title}' in l:
                                 title = source_out_stripped[0].upper() + source_out_stripped[1:]
                                 l = l.format(title=title)
-                            out.write(adjust_child_dir(l) if child else l)
+                            out.write(l)
                     elif 'INSERT_FOOTER' in line:
                         for l in open('_includes/footer.html'):
                             if l.startswith('#BLOG'):
-                                if not target.startswith('_site/blog/'):
+                                if not is_post:
                                     continue  # ignore these lines for non-blog
                                 else:
                                     l = l.replace('#BLOG', '')  # strip this start sequence
-                            out.write(adjust_child_dir(l) if child else l)
+                            out.write(l)
                     elif 'INSERT_CONTENT' in line:
-                        history_link = f'<a href="https://github.com/falexwolf/site/blame/master/{single_source}">History</a>'
+                        history_link = f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">History</a>'
                         history = '<div class="card pull-right" style="display: inline-block;">' + start_card + history_link + '</div></div>'
                         # deal with title as delivered by metadata
                         if md is not None and 'title' in md.Meta:
-                            title = f'<h1>{md.Meta["title"][0]}</h1>'
-                            l = '<div>' + '<span style="font-size: 38px; font-weight: 800;"' + title + '</span>' + history + '</div>'
+                            title = f'{md.Meta["title"][0]}'
+                            l = '<div>' + '<span style="font-size: 38px; font-weight: 800;"<h1>' + title + '</h1></span>' + history + '</div>'
                             out.write(l)
                         for l in open(raw_html):
                             # deal with title if present in doc
                             if l.startswith('<h1'):
-                                title = l.split('<h1')[1].split('</h1>')[0]
-                                l = '<div>' + '<span style="font-size: 38px; font-weight: 800;"' + title + '</span>' + history + '</div>'
+                                parsed_result = l.split('<h1')[1].split('</h1>')[0].split('">')
+                                title = parsed_result[1] if len(parsed_result) == 2 else parsed_result[0].lstrip('>')
+                                l = '<div>' + '<span style="font-size: 38px; font-weight: 800;">' + title + '</span>' + history + '</div>'
                             # replace paper macros
                             if l.startswith('<p>{'):
                                 key = l.split('{')[1].split('}')[0]  # strip off html stuff
@@ -563,6 +559,8 @@ def process_source(single_source):
                                         l = format_pub(p, ascard=True)
                                         break
                             out.write(l)
+                        if is_post:
+                            posts[source_out].append(title)  # also add title to posts dictionary 
                 out.close()
 
             if cleanup:
@@ -580,29 +578,40 @@ def main():
     aa('-t', '--doctype',
         type=str, default='html',
         help='the doctype, \'latex\' or \'html\'')
-    aa('source',
-        type=str,
-        help=('specify a .bib, .md or .ipynb source file'))
     args = p.parse_args()
-    global doctype
+
+    global doctype, posts
     doctype = args.doctype
+    posts = {}
 
     if not os.path.exists('_build'):
         os.makedirs('_build')
+        os.makedirs('_build/_posts')
 
-    sources = []
-    if args.source in {'.'}:
-        for single_source in glob.glob('*'):
-            if single_source.endswith(('.md', '.bib', '.rst')):
-                sources.append(single_source)
-        for single_source in glob.glob('blog/*'):
-            sources.append(single_source)
-    else:
-        sources.append(args.source)
+    # process posts
+    sources = sorted(glob.glob('_posts/*'), reverse=True)
 
     for single_source in sources:
         print('processing source: {}'.format(single_source))
         process_source(single_source)
+
+    # process root level files & folders
+    sources = [
+        single_source for single_source in sorted(glob.glob('*'))
+        if single_source.endswith(('.md', '.bib', '.rst')) and single_source != 'README.md'
+    ]
+
+    for single_source in sources:
+        print('processing source: {}'.format(single_source))
+        process_source(single_source)
+
+    with open('blog.md', 'w') as blog:
+        blog.write('Title: Blog\n\n')
+        for source, post in posts.items():
+            target, date, title = post
+            blog.write(f'* [{title}](../{target}) <span style="{css_style_note}">| {date}</span>\n')
+
+    process_source('blog.md')
 
     # update _site directory by copying over from _assets
     from dirsync import sync
