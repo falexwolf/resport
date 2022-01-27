@@ -596,11 +596,10 @@ def main():
         process_source(single_source)
 
     # process root level files & folders
-    file_types = ['.md', '.bib']
+    file_types = ('.md', '.bib')
     sources = [
-        str(source) for file_type in file_types  # iterate over input file types
-        for source in sorted(Path('.').rglob(f'**/*{file_type}'))  # all files of this type
-        if source.name != 'README.md' and not str(source).startswith('_')
+        source for source in sorted(glob.glob('*'))
+        if source.endswith(file_types) and source != 'README.md'
     ]
 
     for single_source in sources:
