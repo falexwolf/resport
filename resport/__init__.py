@@ -531,11 +531,11 @@ def process_source(single_source):
                             out.write(l)
                     elif 'INSERT_FOOTER' in line:
                         for l in open('_includes/footer.html'):
-                            if l.startswith('#BLOG'):
-                                if not is_post:
-                                    continue  # ignore these lines for non-blog
+                            if l.startswith('#MATHJAX'):
+                                if is_post or source_out == 'blog.md':
+                                    l = l.replace('#MATHJAX', '')  # strip this start sequence
                                 else:
-                                    l = l.replace('#BLOG', '')  # strip this start sequence
+                                    continue
                             out.write(l)
                     elif 'INSERT_CONTENT' in line:
                         history_link = f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">History</a>'
