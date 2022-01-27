@@ -8,6 +8,7 @@ import glob
 import argparse
 import datetime
 import markdown
+from pathlib import Path
 
 css_style_note = 'font-size: 60%; font-weight: bold; margin-left: 2px;'
 start_card = '<div class="card" style="border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; padding: 1.1rem; opacity: 1; font-size: smaller">'
@@ -409,6 +410,9 @@ def process_source(single_source):
     source_out_stripped = source_out.split('.')[0]  # base filename without ending
     is_post = source_out.startswith('_posts/')
 
+    if not os.path.exists('_build/' + single_source):
+        os.makedirs('_build/' + single_source)
+
     if '.bib' in single_source:
         entries = read_file(single_source)
 
@@ -584,10 +588,6 @@ def main():
     doctype = args.doctype
     posts = {}
 
-    if not os.path.exists('_build'):
-        os.makedirs('_build')
-        os.makedirs('_build/_posts')
-
     # process posts
     sources = sorted(glob.glob('_posts/*'), reverse=True)
 
@@ -596,14 +596,15 @@ def main():
         process_source(single_source)
 
     # process root level files & folders
+    file_types = ('.md', '.bib')
     sources = [
-        single_source for single_source in sorted(glob.glob('*'))
-        if single_source.endswith(('.md', '.bib', '.rst')) and single_source != 'README.md'
+        source for source in sorted(glob.glob('*'))
+        if source.endswith(file_types) and source != 'README.md'
     ]
 
-    for single_source in sources:
-        print('processing source: {}'.format(single_source))
-        process_source(single_source)
+    for source in sources:
+        print('processing source: {}'.format(source))
+        process_source(source)
 
     with open('blog.md', 'w') as blog:
         blog.write('Title: Blog\n\n')
@@ -616,3 +617,10 @@ def main():
     # update _site directory by copying over from _assets
     from dirsync import sync
     sync('_assets/', '_site', 'sync')
+
+    directories = [
+        str(p) for p in Path('.').glob('*')
+        if p.is_dir() and not str(p).startswith(('_', '.'))
+    ]
+    for directory in directories:
+        sync(directory, f'_site/{directory}', 'sync', create=True)
