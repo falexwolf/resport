@@ -602,9 +602,9 @@ def main():
         if source.endswith(file_types) and source != 'README.md'
     ]
 
-    for single_source in sources:
-        print('processing source: {}'.format(single_source))
-        process_source(single_source)
+    for source in sources:
+        print('processing source: {}'.format(source))
+        process_source(source)
 
     with open('blog.md', 'w') as blog:
         blog.write('Title: Blog\n\n')
@@ -617,3 +617,10 @@ def main():
     # update _site directory by copying over from _assets
     from dirsync import sync
     sync('_assets/', '_site', 'sync')
+
+    directories = [
+        str(p) for p in Path('.').glob('*')
+        if p.is_dir() and not str(p).startswith(('_', '.'))
+    ]
+    for directory in directories:
+        sync(directory, '_site', 'sync')
