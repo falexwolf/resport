@@ -623,4 +623,4 @@ def main():
         if p.is_dir() and not str(p).startswith(('_', '.'))
     ]
     for directory in directories:
-        sync(directory, '_site', 'sync')
+        sync(directory, f'_site/{directory}', 'sync', create=True)
