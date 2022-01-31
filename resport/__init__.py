@@ -588,6 +588,11 @@ def main():
     doctype = args.doctype
     posts = {}
 
+    if args.doctype == 'latex':
+        print('processing source: _cv/experience.bib')
+        process_source('_cv/experience.bib')
+        quit()
+
     # process posts
     sources = sorted(glob.glob('_posts/*'), reverse=True)
 
@@ -617,7 +622,8 @@ def main():
     # update _site directory by copying over from _assets
     from dirsync import sync
     sync('_assets/', '_site', 'sync')
-    sync('_data/', '_site/data/', 'sync', create=True)
+    if os.path.exists('_data/'):
+        sync('_data/', '_site/data/', 'sync', create=True)
 
     directories = [
         str(p) for p in Path('.').glob('*')
