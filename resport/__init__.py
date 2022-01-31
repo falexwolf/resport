@@ -418,7 +418,7 @@ def process_source(single_source):
 
     # this is for the experience section of the cv
     if single_source == '_cv/experience.bib':
-        f = open('_cv/source/generated_experience.tex', 'w')
+        f = open('_cv/experience.tex', 'w')
         for entry in entries:
             f.write(format_latex_experience(entry))
         f.close()
@@ -428,7 +428,7 @@ def process_source(single_source):
             if doctype == 'html':
                 f = open('_build/' + source_out.replace('.bib', '.txt'), 'w')
             else:
-                f = open('_cv/source/generated_publications.tex', 'w')
+                f = open('_cv/publications.tex', 'w')
             if 'publications' in single_source:
                 format_all_publications(f, entries=entries, doctype=doctype)
             elif 'talks' in single_source:  # these are only the talks, only html
@@ -591,6 +591,8 @@ def main():
     if args.doctype == 'latex':
         print('processing source: _cv/experience.bib')
         process_source('_cv/experience.bib')
+        print('processing source: publications.bib')
+        process_source('publications.bib')
         quit()
 
     # process posts
