@@ -624,6 +624,7 @@ def main():
     # update _site directory by copying over from _assets
     from dirsync import sync
     sync('_assets/', '_site', 'sync')
+    shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
     if os.path.exists('_data/'):
         sync('_data/', '_site/data/', 'sync', create=True)
 
