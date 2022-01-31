@@ -346,7 +346,7 @@ def format_talks(entry, doctype='html'):
     return s
 
 
-talks_header = "<h1>Talks</h1>"
+talks_header = "<h1>Talks</h1>\n"
 
 
 def format_all_publications(f, entries, doctype):
