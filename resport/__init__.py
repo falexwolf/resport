@@ -360,6 +360,7 @@ def format_all_publications(f, entries, doctype):
 <li> Co-first and co-last authors are indicated by * and †, respectively.</li>
 <li> For publications grouped by context, see <a href="/research">research</a>.</li>
 </ul>
+<hr/>
 
 <script async src="https://badge.dimensions.ai/badge.js" charset="utf-8"></script>
 <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
