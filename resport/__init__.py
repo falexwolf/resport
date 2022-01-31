@@ -617,6 +617,7 @@ def main():
     # update _site directory by copying over from _assets
     from dirsync import sync
     sync('_assets/', '_site', 'sync')
+    sync('_data/', '_site/data/', 'sync', create=True)
 
     directories = [
         str(p) for p in Path('.').glob('*')
