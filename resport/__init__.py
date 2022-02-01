@@ -626,9 +626,10 @@ def main():
     from dirsync import sync
     sync('_assets/', '_site', 'sync')
     shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
-    for directory in ['data', 'talks']:
-        if os.path.exists('_data/'):
-            sync(f'_{directory}/', '_site/{directory}/', 'sync', create=True)
+    if os.path.exists('talks/'):
+        sync('talks/', '_site/talks/', 'sync', create=True)
+    if os.path.exists('_data/'):
+        sync('_data/', '_site/data/', 'sync', create=True)
 
     directories = [
         str(p) for p in Path('.').glob('*')
