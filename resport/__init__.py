@@ -525,17 +525,17 @@ def process_source(single_source):
 
                 out = open(target, 'w')
                 publications = read_file('publications.bib')
-                for line in open('_includes/blog.html'):
+                for line in open(includes_dir / 'blog.html'):
                     if 'INSERT' not in line:
                         out.write(line)
                     elif 'INSERT_HEADER' in line:
-                        for l in open('_includes/header.html'):
+                        for l in open(includes_dir / 'header.html'):
                             if '{title}' in l:
                                 title = source_out_stripped[0].upper() + source_out_stripped[1:]
                                 l = l.format(title=title)
                             out.write(l)
                     elif 'INSERT_FOOTER' in line:
-                        for l in open('_includes/footer.html'):
+                        for l in open(includes_dir / 'footer.html'):
                             if l.startswith('#MATHJAX'):
                                 if is_post or source_out == 'blog.md':
                                     l = l.replace('#MATHJAX', '')  # strip this start sequence
@@ -583,7 +583,37 @@ def main():
     aa('-t', '--doctype',
         type=str, default='html',
         help='the doctype, \'latex\' or \'html\'')
+    aa('subcommand',
+        type=str, default='build',
+        help=('specify "build" or "edit", a .bib, .md or .ipynb source file'))
     args = p.parse_args()
+
+    from dirsync import sync
+
+    root_dir = Path(__file__).parent.resolve().parent
+
+    # determine where to copy asset files
+    if args.subcommand == 'edit':
+        print(
+            '\nCopy css files & related to website root.'
+            'This will only copy some files if they are not yet present.\n'
+        )
+        target_dir = Path('.')      # will place them at the root of the website repo
+        for directory in ['_assets', '_includes']:
+            print(f'* copy {directory}:')
+            sub_dir = (root_dir / directory)
+            sync(sub_dir, target_dir / directory, 'sync', create=True)
+        quit()
+    else:
+        # assets: copy directly to _site
+        if not Path('_assets').exists():
+            sync(root_dir / '_assets/', '_site/', 'sync', create=True)
+        # includes
+        global includes_dir  # directory for html includes
+        if Path('_includes').exists():
+            includes_dir = '_includes'
+        else:
+            includes_dir = Path(root_dir / '_includes')
 
     global doctype, posts
     doctype = args.doctype
@@ -596,8 +626,18 @@ def main():
         process_source('publications.bib')
         quit()
 
+    def subset_sources(sources):
+        if args.subcommand == 'build':
+            return sources
+        else:
+            if args.subcommand not in sources:
+                return []
+            else:
+                return [args.subcommand]
+
     # process posts
     sources = sorted(glob.glob('_posts/*'), reverse=True)
+    sources = subset_sources(sources)
 
     for single_source in sources:
         print('processing source: {}'.format(single_source))
@@ -609,6 +649,8 @@ def main():
         source for source in sorted(glob.glob('*'))
         if source.endswith(file_types) and source != 'README.md'
     ]
+
+    sources = subset_sources(sources)
 
     for source in sources:
         print('processing source: {}'.format(source))
@@ -623,8 +665,8 @@ def main():
     process_source('blog.md')
 
     # update _site directory by copying over from _assets
-    from dirsync import sync
-    sync('_assets/', '_site', 'sync')
+    if Path('_assets/').exists():  # assets are at website root
+        sync('_assets/', '_site', 'sync')
     shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
     if os.path.exists('talks/'):
         sync('talks/', '_site/talks/', 'sync', create=True)

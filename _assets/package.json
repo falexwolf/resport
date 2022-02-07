@@ -1,0 +1,18 @@
+{
+  "name": "resport",
+  "title": "Research Portfolio",
+  "version": "0.1.0",
+  "homepage": "https://github.com/falexwolf/resport",
+  "author": "Alex Wolf",
+  "license": "MIT",
+  "devDependencies": {
+    "bootstrap": "^3.3.7",
+    "browser-sync": "^2.13.0",
+    "font-awesome": "^4.6.3",
+    "jquery": "^1.11.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/falexwolf/resport"
+  }
+}
