@@ -583,6 +583,9 @@ def main():
     aa('-t', '--doctype',
         type=str, default='html',
         help='the doctype, \'latex\' or \'html\'')
+    aa('source',
+        type=str, default='.',
+        help=('specify the root dir (default), a .bib, .md or .ipynb source file'))
     args = p.parse_args()
 
     global doctype, posts
@@ -596,8 +599,18 @@ def main():
         process_source('publications.bib')
         quit()
 
+    def subset_sources(sources):
+        if args.source == '.':
+            return sources
+        else:
+            if args.source not in sources:
+                return []
+            else:
+                return [args.source]
+
     # process posts
     sources = sorted(glob.glob('_posts/*'), reverse=True)
+    sources = subset_sources(sources)
 
     for single_source in sources:
         print('processing source: {}'.format(single_source))
@@ -609,6 +622,8 @@ def main():
         source for source in sorted(glob.glob('*'))
         if source.endswith(file_types) and source != 'README.md'
     ]
+
+    sources = subset_sources(sources)
 
     for source in sources:
         print('processing source: {}'.format(source))
