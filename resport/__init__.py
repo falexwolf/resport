@@ -592,8 +592,6 @@ def main():
 
     root_dir = Path(__file__).parent.resolve().parent
 
-    global includes_dir  # directory for html includes
-
     # determine where to copy asset files
     if args.subcommand == 'edit':
         print(
@@ -601,18 +599,21 @@ def main():
             'This will only copy some files if they are not yet present.\n'
         )
         target_dir = Path('.')      # will place them at the root of the website repo
-        includes_dir = Path('_includes')
-    else:
-        target_dir = Path('_site')  # will place them into the _site deployment directory
-        includes_dir = Path(root_dir / '_includes')
-
-    for directory in ['_assets', '_includes']:
-        print(f'* copy {directory}:')
-        sub_dir = (root_dir / directory)
-        sync(sub_dir, target_dir / directory, 'sync', create=True)
-
-    if args.subcommand == 'edit':  # end execution
+        for directory in ['_assets', '_includes']:
+            print(f'* copy {directory}:')
+            sub_dir = (root_dir / directory)
+            sync(sub_dir, target_dir / directory, 'sync', create=True)
         quit()
+    else:
+        # assets: copy directly to _site
+        if not Path('_assets').exists():
+            sync(root_dir / '_assets/', '_site/', 'sync', create=True)
+        # includes
+        global includes_dir  # directory for html includes
+        if Path('_includes').exists():
+            includes_dir = '_includes'
+        else:
+            includes_dir = Path(root_dir / '_includes')
 
     global doctype, posts
     doctype = args.doctype
