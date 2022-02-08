@@ -16,7 +16,6 @@ dependencies = [
     "nbconvert",
 ]
 [project.urls]
-Home = "https://github.com/falexwolf/resport"
-
+home = "https://github.com/falexwolf/resport"
 [project.scripts]
 resport = "resport:main"
