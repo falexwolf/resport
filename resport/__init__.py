@@ -590,7 +590,7 @@ def main():
 
     from dirsync import sync
 
-    root_dir = Path(__file__).parent.resolve().parent
+    root_dir = Path(__file__).parent.resolve()
 
     # determine where to copy asset files
     if args.subcommand == 'edit':
