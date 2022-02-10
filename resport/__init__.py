@@ -672,6 +672,8 @@ def main():
         sync('talks/', '_site/talks/', 'sync', create=True)
     if os.path.exists('_data/'):
         sync('_data/', '_site/data/', 'sync', create=True)
+    if os.path.exists('_img/'):
+        sync('_img/', '_site/img/', 'sync', create=True)
 
     directories = [
         str(p) for p in Path('.').glob('*')
