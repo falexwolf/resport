@@ -3,16 +3,17 @@
  * Copyright 2013-2016 Start Bootstrap
  * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
  */
+ @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
 a {
 	color:#0645AD;}
 .caption,.intro-header .page-heading,.intro-header .site-heading,footer .copyright {
 	text-align:center}
 body {
-	font-family:Helvetica,Arial,sans-serif;
+	font-family:'Source Sans Pro','Open Sans',sans,Lora,'Times New Roman',serif;
 	font-size:20px;
 	-webkit-tap-highlight-color:#0085A1}
 .intro-header .page-heading .subheading,.intro-header .post-heading .subheading,.intro-header .site-heading .subheading,.navbar-custom,h1,h2,h3,h4,h5,h6 {
-	font-family:Helvetica,Arial,sans-serif}
+	font-family:'Source Sans Pro','Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif}
 p {
 	line-height:1.5;
 	margin-bottom:10px}
@@ -127,6 +128,11 @@ hr.small {
 	font-size:24px;
 	margin:10px 0 30px;
 	font-weight:600}
+.intro-header .post-heading .meta {
+	font-family:Lora,'Times New Roman',serif;
+	font-style:italic;
+	font-weight:300;
+	font-size:20px}
 .intro-header .post-heading .meta a {
 	color:#fff}
 @media only screen and (min-width:768px) {
@@ -167,7 +173,7 @@ hr.small {
 	margin-top:60px;
 	font-weight:700}
 .btn,.pager li>a,.pager li>span {
-	font-family:Helvetica,Arial,sans-serif;
+	font-family:'Open Sans','Helvetica Neue',Helvetica,Arial,sans-serif;
 	text-transform:uppercase;
 	font-weight:800;
 	letter-spacing:1px}
