@@ -6,11 +6,11 @@ import os
 import shutil
 import glob
 import argparse
-import datetime
+from datetime import datetime
 import markdown
 from pathlib import Path
 
-css_style_note = 'font-size: 60%; font-weight: bold; margin-left: 2px;'
+css_style_note = 'font-size: 60%; font-weight: 500; margin-left: 2px;'
 start_card = '<div class="card" style="border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; padding: 1.1rem; opacity: 1; font-size: smaller">'
 
 # keywords for fields in entries
@@ -195,7 +195,7 @@ def format_pub(entry, doctype='html', ascard=False):
     if doctype == 'html':
         s += ('<span '
     #            +'" style="font-variant: small-caps; font-size: 90%">'
-               + ' style="font-weight: bold">'
+               + ' style="font-weight: 500">'
                + entry['title'] + '</span> <br> ')
     else:
         s += r'\textit{' + entry['title'] + r'}\\' + ' \n & '
@@ -328,7 +328,7 @@ def format_talks(entry, doctype='html'):
     s += '<span id="' + entry['id'] + '" style="font-size: 60%">' + entry['id'] + '</span> '
     s += ('<span '
            # +'" style="font-variant: small-caps; font-size: 90%">'
-           + ' style="font-weight: bold">'
+           + ' style="font-weight:500">'
            + entry['title'] + '</span> <br> ')
     # format type
     s += markdown_no_p(entry['type']) + '<br>'
@@ -536,6 +536,13 @@ def process_source(single_source):
                             out.write(l)
                     elif 'INSERT_FOOTER' in line:
                         for l in open(includes_dir / 'footer.html'):
+                            if '{year} {name}. See {page_history}. Edit {page_source}.' in l:
+                                l = l.format(
+                                    year=datetime.now().year,
+                                    name='Alex Wolf',
+                                    page_history=f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">page history</a>',
+                                    page_source=f'<a href="https://github.com/falexwolf/falexwolf.me/blob/main/{single_source}">page source</a>',
+                                    )
                             if l.startswith('#MATHJAX'):
                                 if is_post or source_out == 'blog.md':
                                     l = l.replace('#MATHJAX', '')  # strip this start sequence
@@ -543,19 +550,17 @@ def process_source(single_source):
                                     continue
                             out.write(l)
                     elif 'INSERT_CONTENT' in line:
-                        history_link = f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">History</a>'
-                        history = '<div class="card pull-right" style="display: inline-block;">' + start_card + history_link + '</div></div>'
                         # deal with title as delivered by metadata
                         if md is not None and 'title' in md.Meta:
                             title = f'{md.Meta["title"][0]}'
-                            l = '<div>' + '<span style="font-size: 38px; font-weight: 800;"<h1>' + title + '</h1></span>' + history + '</div>'
+                            l = '<h1>' + title + '</h1>'
                             out.write(l)
                         for l in open(raw_html):
                             # deal with title if present in doc
                             if l.startswith('<h1'):
                                 parsed_result = l.split('<h1')[1].split('</h1>')[0].split('">')
                                 title = parsed_result[1] if len(parsed_result) == 2 else parsed_result[0].lstrip('>')
-                                l = '<div>' + '<span style="font-size: 38px; font-weight: 800;">' + title + '</span>' + history + '</div>'
+                                l = f'<h1>{title}</h1>'
                             # replace paper macros
                             if l.startswith('<p>{'):
                                 key = l.split('{')[1].split('}')[0]  # strip off html stuff
@@ -584,36 +589,36 @@ def main():
         type=str, default='html',
         help='the doctype, \'latex\' or \'html\'')
     aa('subcommand',
-        type=str, default='build',
-        help=('specify "build" or "edit", a .bib, .md or .ipynb source file'))
+        type=str,
+        help=('either pass "build" or "init"; alternatively, to build a single source file, pass a .bib, .md or .ipynb source file'))
     args = p.parse_args()
+
+    # sanity checks of project setup
+    if not args.subcommand == 'init':  # user wants to build website
+        if not Path('_css/').exists() or not Path('_includes/').exists():
+            print('call `resport init` to initialize website project')
+            quit()
 
     from dirsync import sync
 
     root_dir = Path(__file__).parent.resolve()
 
-    # determine where to copy asset files
-    if args.subcommand == 'edit':
+    if args.subcommand == 'init':  # init website project with configurable css and includes
         print(
-            '\nCopy css files & related to website root.'
-            'This will only copy some files if they are not yet present.\n'
+            '\nInit website by copying _css & _includes to website root.'
         )
         target_dir = Path('.')      # will place them at the root of the website repo
-        for directory in ['_assets', '_includes']:
+        for directory in ['_css', '_includes']:
             print(f'* copy {directory}:')
             sub_dir = (root_dir / directory)
             sync(sub_dir, target_dir / directory, 'sync', create=True)
         quit()
-    else:
-        # assets: copy directly to _site
-        if not Path('_assets').exists():
-            sync(root_dir / '_assets/', '_site/', 'sync', create=True)
+    else:  # build the webpage
+        # copy js & less & font assets directly to site
+        sync(root_dir / '_assets/', '_site/', 'sync', create=True)
         # includes
         global includes_dir  # directory for html includes
-        if Path('_includes').exists():
-            includes_dir = '_includes'
-        else:
-            includes_dir = Path(root_dir / '_includes')
+        includes_dir = Path('_includes')
 
     global doctype, posts
     doctype = args.doctype
@@ -664,10 +669,12 @@ def main():
 
     process_source('blog.md')
 
-    # update _site directory by copying over from _assets
-    if Path('_assets/').exists():  # assets are at website root
-        sync('_assets/', '_site', 'sync')
-    shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
+    # css is always at the website
+    sync('_css/', '_site/_css/', 'sync', create=True)
+    if Path('_cv/CV.pdf').exists():
+        shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
+    else:
+        print('warning: CV.pdf does not exist')
     if os.path.exists('talks/'):
         sync('talks/', '_site/talks/', 'sync', create=True)
     if os.path.exists('_data/'):
