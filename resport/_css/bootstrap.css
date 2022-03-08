@@ -25,7 +25,7 @@ a:active,a:hover {
 abbr[title] {
 	border-bottom:1px dotted}
 b,strong {
-	font-weight:700}
+	font-weight:500}
 dfn {
 	font-style:italic}
 h1 {
@@ -702,7 +702,7 @@ html {
 	-webkit-tap-highlight-color:rgba(0,0,0,0)}
 body {
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-	font-size:14px;
+	font-size:18px;
 	line-height:1.42857143;
 	color:#333;
 	background-color:#fff}

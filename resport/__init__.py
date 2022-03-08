@@ -10,7 +10,7 @@ from datetime import datetime
 import markdown
 from pathlib import Path
 
-css_style_note = 'font-size: 60%; font-weight: bold; margin-left: 2px;'
+css_style_note = 'font-size: 60%; font-weight: 500; margin-left: 2px;'
 start_card = '<div class="card" style="border: 1px solid rgba(0,0,0,.125); border-radius: .25rem; padding: 1.1rem; opacity: 1; font-size: smaller">'
 
 # keywords for fields in entries
@@ -195,7 +195,7 @@ def format_pub(entry, doctype='html', ascard=False):
     if doctype == 'html':
         s += ('<span '
     #            +'" style="font-variant: small-caps; font-size: 90%">'
-               + ' style="font-weight: bold">'
+               + ' style="font-weight: 500">'
                + entry['title'] + '</span> <br> ')
     else:
         s += r'\textit{' + entry['title'] + r'}\\' + ' \n & '
@@ -328,7 +328,7 @@ def format_talks(entry, doctype='html'):
     s += '<span id="' + entry['id'] + '" style="font-size: 60%">' + entry['id'] + '</span> '
     s += ('<span '
            # +'" style="font-variant: small-caps; font-size: 90%">'
-           + ' style="font-weight: bold">'
+           + ' style="font-weight:500">'
            + entry['title'] + '</span> <br> ')
     # format type
     s += markdown_no_p(entry['type']) + '<br>'
@@ -560,7 +560,7 @@ def process_source(single_source):
                             if l.startswith('<h1'):
                                 parsed_result = l.split('<h1')[1].split('</h1>')[0].split('">')
                                 title = parsed_result[1] if len(parsed_result) == 2 else parsed_result[0].lstrip('>')
-                                l = title
+                                l = f'<h1>{title}</h1>'
                             # replace paper macros
                             if l.startswith('<p>{'):
                                 key = l.split('{')[1].split('}')[0]  # strip off html stuff
