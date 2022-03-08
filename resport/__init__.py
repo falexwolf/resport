@@ -6,7 +6,7 @@ import os
 import shutil
 import glob
 import argparse
-import datetime
+from datetime import datetime
 import markdown
 from pathlib import Path
 
@@ -536,6 +536,13 @@ def process_source(single_source):
                             out.write(l)
                     elif 'INSERT_FOOTER' in line:
                         for l in open(includes_dir / 'footer.html'):
+                            if '{year} {name}. See {page_history}. Edit {page_source}.' in l:
+                                l = l.format(
+                                    year=datetime.now().year,
+                                    name='Alex Wolf',
+                                    page_history=f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">page history</a>',
+                                    page_source=f'<a href="https://github.com/falexwolf/falexwolf.me/blob/main/{single_source}">page source</a>',
+                                    )
                             if l.startswith('#MATHJAX'):
                                 if is_post or source_out == 'blog.md':
                                     l = l.replace('#MATHJAX', '')  # strip this start sequence
@@ -543,19 +550,17 @@ def process_source(single_source):
                                     continue
                             out.write(l)
                     elif 'INSERT_CONTENT' in line:
-                        history_link = f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">History</a>'
-                        history = '<div class="card pull-right" style="display: inline-block;">' + start_card + history_link + '</div></div>'
                         # deal with title as delivered by metadata
                         if md is not None and 'title' in md.Meta:
                             title = f'{md.Meta["title"][0]}'
-                            l = '<div>' + '<h1>' + title + '</h1>' + history + '</div>'
+                            l = '<h1>' + title + '</h1>'
                             out.write(l)
                         for l in open(raw_html):
                             # deal with title if present in doc
                             if l.startswith('<h1'):
                                 parsed_result = l.split('<h1')[1].split('</h1>')[0].split('">')
                                 title = parsed_result[1] if len(parsed_result) == 2 else parsed_result[0].lstrip('>')
-                                l = '<div>' + title + history + '</div>'
+                                l = title
                             # replace paper macros
                             if l.startswith('<p>{'):
                                 key = l.split('{')[1].split('}')[0]  # strip off html stuff
