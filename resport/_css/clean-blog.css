@@ -33,8 +33,8 @@ hr.small {
 	width:100%;
 	z-index:3}
 .navbar-custom .navbar-header .navbar-toggle {
-	letter-spacing:1px;
-	font-size:18px;
+	font-size:16px;	
+	font-weight:500;
 	color:#333}
 .navbar-custom .nav li a, .navbar-brand {
 	font-size:16px;
