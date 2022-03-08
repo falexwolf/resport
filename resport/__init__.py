@@ -665,9 +665,7 @@ def main():
     process_source('blog.md')
 
     # css is always at the website
-    sync('_css/', '_site/_css/', 'sync', create=True)    
-    if Path('_assets/').exists():  # assets are at website root
-        sync('_assets/', '_site', 'sync')
+    sync('_css/', '_site/_css/', 'sync', create=True)
     if Path('_cv/CV.pdf').exists():
         shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
     else:
