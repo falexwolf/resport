@@ -609,9 +609,8 @@ def main():
             sync(sub_dir, target_dir / directory, 'sync', create=True)
         quit()
     else:  # build the webpage
-        # assets: copy directly to _site
-        if not Path('_assets').exists():
-            sync(root_dir / '_assets/', '_site/', 'sync', create=True)
+        # copy js & less & font assets directly to site
+        sync(root_dir / '_assets/', '_site/', 'sync', create=True)
         # includes
         global includes_dir  # directory for html includes
         includes_dir = '_includes'
