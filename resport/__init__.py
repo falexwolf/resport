@@ -588,9 +588,11 @@ def main():
         help=('either pass "build" or "init"; alternatively, to build a single source file, pass a .bib, .md or .ipynb source file'))
     args = p.parse_args()
 
-    if not Path('_css/').exists() or not Path('_includes/').exists():
-        print('call `resport init` to initialize website project')
-        quit()
+    # sanity checks of project setup
+    if not args.subcommand == 'init':  # user wants to build website
+        if not Path('_css/').exists() or not Path('_includes/').exists():
+            print('call `resport init` to initialize website project')
+            quit()
 
     from dirsync import sync
 
@@ -598,8 +600,7 @@ def main():
 
     if args.subcommand == 'init':  # init website project with configurable css and includes
         print(
-            '\nInit website by copying css & js files & to website root.'
-            'This will only copy some files if they are not yet present.\n'
+            '\nInit website by copying _css & _includes to website root.'
         )
         target_dir = Path('.')      # will place them at the root of the website repo
         for directory in ['_css', '_includes']:
