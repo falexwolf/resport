@@ -548,14 +548,14 @@ def process_source(single_source):
                         # deal with title as delivered by metadata
                         if md is not None and 'title' in md.Meta:
                             title = f'{md.Meta["title"][0]}'
-                            l = '<div>' + '<span style="font-size: 38px; font-weight: 800;"<h1>' + title + '</h1></span>' + history + '</div>'
+                            l = '<div>' + '<h1>' + title + '</h1>' + history + '</div>'
                             out.write(l)
                         for l in open(raw_html):
                             # deal with title if present in doc
                             if l.startswith('<h1'):
                                 parsed_result = l.split('<h1')[1].split('</h1>')[0].split('">')
                                 title = parsed_result[1] if len(parsed_result) == 2 else parsed_result[0].lstrip('>')
-                                l = '<div>' + '<span style="font-size: 38px; font-weight: 800;">' + title + '</span>' + history + '</div>'
+                                l = '<div>' + title + history + '</div>'
                             # replace paper macros
                             if l.startswith('<p>{'):
                                 key = l.split('{')[1].split('}')[0]  # strip off html stuff
@@ -613,7 +613,7 @@ def main():
         sync(root_dir / '_assets/', '_site/', 'sync', create=True)
         # includes
         global includes_dir  # directory for html includes
-        includes_dir = '_includes'
+        includes_dir = Path('_includes')
 
     global doctype, posts
     doctype = args.doctype
