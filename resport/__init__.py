@@ -584,12 +584,12 @@ def main():
         type=str, default='html',
         help='the doctype, \'latex\' or \'html\'')
     aa('subcommand',
-        type=str, default='build',
-        help=('specify "build" or "init", a .bib, .md or .ipynb source file'))
+        type=str,
+        help=('either pass "build" or "init"; alternatively, to build a single source file, pass a .bib, .md or .ipynb source file'))
     args = p.parse_args()
 
-    if not Path('_css/').exists():
-        print('project is not properly initialized, missing css')
+    if not Path('_css/').exists() or not Path('_includes/').exists():
+        print('call `resport init` to initialize website project')
         quit()
 
     from dirsync import sync
@@ -613,10 +613,7 @@ def main():
             sync(root_dir / '_assets/', '_site/', 'sync', create=True)
         # includes
         global includes_dir  # directory for html includes
-        if Path('_includes').exists():
-            includes_dir = '_includes'
-        else:
-            includes_dir = Path(root_dir / '_includes')
+        includes_dir = '_includes'
 
     global doctype, posts
     doctype = args.doctype
