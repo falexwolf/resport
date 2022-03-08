@@ -585,21 +585,25 @@ def main():
         help='the doctype, \'latex\' or \'html\'')
     aa('subcommand',
         type=str, default='build',
-        help=('specify "build" or "edit", a .bib, .md or .ipynb source file'))
+        help=('specify "build" or "init", a .bib, .md or .ipynb source file'))
     args = p.parse_args()
+
+    if not Path('_css/').exists():
+        print('project is not properly initialized, missing css')
+        quit()
 
     from dirsync import sync
 
     root_dir = Path(__file__).parent.resolve()
 
     # determine where to copy asset files
-    if args.subcommand == 'edit':
+    if args.subcommand == 'init':
         print(
-            '\nCopy css files & related to website root.'
+            '\nInit website by copying css & js files & to website root.'
             'This will only copy some files if they are not yet present.\n'
         )
         target_dir = Path('.')      # will place them at the root of the website repo
-        for directory in ['_assets', '_includes']:
+        for directory in ['_css', '_includes']:
             print(f'* copy {directory}:')
             sub_dir = (root_dir / directory)
             sync(sub_dir, target_dir / directory, 'sync', create=True)
@@ -664,10 +668,14 @@ def main():
 
     process_source('blog.md')
 
-    # update _site directory by copying over from _assets
+    # css is always at the website
+    sync('_css/', '_site/_css/', 'sync', create=True)    
     if Path('_assets/').exists():  # assets are at website root
         sync('_assets/', '_site', 'sync')
-    shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
+    if Path('_cv/CV.pdf').exists():
+        shutil.copy('_cv/CV.pdf', '_site/CV.pdf')
+    else:
+        print('warning: CV.pdf does not exist')
     if os.path.exists('talks/'):
         sync('talks/', '_site/talks/', 'sync', create=True)
     if os.path.exists('_data/'):
