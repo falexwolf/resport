@@ -596,8 +596,7 @@ def main():
 
     root_dir = Path(__file__).parent.resolve()
 
-    # determine where to copy asset files
-    if args.subcommand == 'init':
+    if args.subcommand == 'init':  # init website project with configurable css and includes
         print(
             '\nInit website by copying css & js files & to website root.'
             'This will only copy some files if they are not yet present.\n'
@@ -608,7 +607,7 @@ def main():
             sub_dir = (root_dir / directory)
             sync(sub_dir, target_dir / directory, 'sync', create=True)
         quit()
-    else:
+    else:  # build the webpage
         # assets: copy directly to _site
         if not Path('_assets').exists():
             sync(root_dir / '_assets/', '_site/', 'sync', create=True)
