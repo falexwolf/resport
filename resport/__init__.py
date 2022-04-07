@@ -682,7 +682,7 @@ def main():
     if os.path.exists('_img/'):
         sync('_img/', '_site/img/', 'sync', create=True)
     if os.path.exists('favicon.ico'):
-        shutil.copy('favicon.ico', '_site/favicon.co')
+        shutil.copy('favicon.ico', '_site/favicon.ico')
 
     directories = [
         str(p) for p in Path('.').glob('*')
