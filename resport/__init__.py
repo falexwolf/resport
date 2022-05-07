@@ -538,12 +538,12 @@ def process_source(single_source):
                             out.write(l)
                     elif 'INSERT_FOOTER' in line:
                         for l in open(includes_dir / 'footer.html'):
-                            if '{year} {name}. See {page_history}. Edit {page_source}.' in l:
+                            if '{year} {name} · {page_history} · {page_source}' in l:
                                 l = l.format(
                                     year=datetime.now().year,
                                     name='Alex Wolf',
-                                    page_history=f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">page history</a>',
-                                    page_source=f'<a href="https://github.com/falexwolf/falexwolf.me/blob/main/{single_source}">page source</a>',
+                                    page_history=f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">Page history</a>',
+                                    page_source=f'<a href="https://github.com/falexwolf/falexwolf.me/blob/main/{single_source}">Page source</a>',
                                     )
                             if l.startswith('#MATHJAX'):
                                 if is_post or source_out == 'blog.md':
