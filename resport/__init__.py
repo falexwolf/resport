@@ -459,7 +459,7 @@ def process_source(single_source):
                     single_source = new_source_dir
                     cleanup = True
             # now, deal with .md and .rst sources
-            if source_out == 'about.md':  # generate the page root (index.html)
+            if source_out == 'index.md':  # generate the page root (index.html)
                 target_dir = '_site'
             elif is_post:  # deal with posts
                 year = source_out.split('-')[0].lstrip('_posts/')  # get year
@@ -532,6 +532,8 @@ def process_source(single_source):
                         for l in open(includes_dir / 'header.html'):
                             if '{title}' in l:
                                 title = source_out_stripped[0].upper() + source_out_stripped[1:]
+                                if title == 'Index':
+                                    title = 'Home'
                                 l = l.format(title=title)
                             out.write(l)
                     elif 'INSERT_FOOTER' in line:
