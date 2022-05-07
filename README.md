@@ -1,7 +1,11 @@
 # resport: Research portfolio
 
-A simple Python-based research portfolio site generator: `pip install resport`.
+A pile of scripts organically grown since 2010. It might never grow into maintainable software.
 
-For an example, see https://github.com/falexwolf/falexwolf.me.
+It uses Python and Bootstrap and I use it to build https://github.com/falexwolf/falexwolf.me.
 
-Currently a pile of organically grown experimental code, for which I don't yet offer support. If you're interested in developing, please ping me!
+If you think that a similar research portfolio generator could be of interest to a wider audience, please open an issue.
+
+If enough people are interested this could be an occasion to make this a maintainable package.
+
+Oh, and if you want the `resport` handle on PyPI, please also make an issue or ping me on LinkedIn or Twitter.
