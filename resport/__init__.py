@@ -333,14 +333,15 @@ def format_talks(entry, doctype='html'):
     # format type
     s += markdown_no_p(entry['type']) + '<br>'
     # format data
-    s += entry['location']
+    s += markdown_no_p(entry['location'])
     s += ' (' + entry['date'] + ')</a> '
-    # pdf
+    # assets
     if 'pdf' in entry:
         s += ' <a href="' + entry['pdf'] + '" style="{}">pdf</a>'.format(css_style_note)
-    # html
     if 'html' in entry:
         s += ' <a href="' + entry['html'] + '" style="{}">html</a>'.format(css_style_note)
+    if 'video' in entry:
+        s += ' <a href="' + entry['video'] + '" style="{}">video</a>'.format(css_style_note)
     # end of publication entry
     s += '</p>' + '\n' + '\n'
     return s
