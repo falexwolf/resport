@@ -532,7 +532,10 @@ def process_source(single_source):
                     elif 'INSERT_HEADER' in line:
                         for l in open(includes_dir / 'header.html'):
                             if '{title}' in l:
-                                title = source_out_stripped[0].upper() + source_out_stripped[1:]
+                                if md is not None and 'title' in md.Meta:
+                                    title = f'{md.Meta["title"][0]}'
+                                else:
+                                    title = source_out_stripped[0].upper() + source_out_stripped[1:]
                                 if title == 'Index':
                                     title = 'Home'
                                 l = l.format(title=title)
