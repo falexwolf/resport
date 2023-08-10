@@ -367,7 +367,7 @@ def format_all_publications(f, entries, doctype):
 <script type='text/javascript' src='https://d1bxh8uas1mnw7.cloudfront.net/assets/embed.js'></script>
 ''')
 
-        f.write('<h2 id="preprints"> Preprints </h2> \n\n')
+        f.write('<h2 id="preprints"> Papers </h2> \n\n')
     else:
         f.write('\n\subsubsection*{Preprints}' + r'\vspace{-1em}' + '\n')
         f.write(r'\noindent\begin{longtable}[t]{p{.02\textwidth} p{.93\textwidth}}' + '\n')
@@ -376,9 +376,7 @@ def format_all_publications(f, entries, doctype):
     otherpub = True
     for entry in entries:
         if 'Article' == entry['entryType'] and journals:
-            if doctype == 'html':
-                f.write('<h2>Reviewed articles</h2>\n\n')
-            else:
+            if doctype != 'html':
                 f.write(r'\end{longtable}\vspace*{-2.5em}')
                 f.write('\n\subsubsection*{Reviewed articles}' + r'\vspace{-1em}' + '\n')
                 f.write(r'\noindent\begin{longtable}[t]{p{.02\textwidth} p{.93\textwidth}}' + '\n')
