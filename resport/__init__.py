@@ -544,8 +544,8 @@ def process_source(single_source):
                                 l = l.format(
                                     year=datetime.now().year,
                                     name='Alex Wolf',
-                                    page_history=f'<a href="https://github.com/falexwolf/falexwolf.me/blame/main/{single_source}">Page history</a>',
-                                    page_source=f'<a href="https://github.com/falexwolf/falexwolf.me/blob/main/{single_source}">Page source</a>',
+                                    page_history=f'<a href="https://github.com/falexwolf/falexwolf.com/blame/data/{single_source}">Page history</a>',
+                                    page_source=f'<a href="https://github.com/falexwolf/falexwolf.com/blob/data/{single_source}">Page source</a>',
                                     )
                             if l.startswith('#MATHJAX'):
                                 if is_post or source_out == 'blog.md':
